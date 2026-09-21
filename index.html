@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Munir SINANI — Portfolio 3D IT & Systems</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Three.js CDN pour l'animation 3D -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              dark: '#050811',
+              card: '#0d1527',
+              border: '#1e293b',
+              accent: '#06b6d4',
+              blue: '#3b82f6',
+              purple: '#8b5cf6',
+              neon: '#10b981'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body { background-color: #050811; color: #f3f4f6; overflow-x: hidden; font-family: 'Inter', sans-serif; }
+    #canvas-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
+    .glass-nav { background: rgba(5, 8, 17, 0.85); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+    .glass-card { background: rgba(13, 21, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(59, 130, 246, 0.15); transition: all 0.3s ease; }
+    .glass-card:hover { border-color: rgba(6, 182, 212, 0.5); transform: translateY(-4px); box-shadow: 0 12px 30px -10px rgba(6, 182, 212, 0.25); }
+    .glow-title { text-shadow: 0 0 30px rgba(59, 130, 246, 0.5); }
+  </style>
+</head>
+<body class="selection:bg-brand-accent selection:text-black">
+
+  <!-- Arrière-plan 3D interactif -->
+  <div id="canvas-container"></div>
+
+  <!-- Navigation -->
+  <header class="fixed top-0 left-0 right-0 z-50 glass-nav">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-blue to-brand-accent flex items-center justify-center font-mono font-bold text-lg text-white shadow-lg shadow-brand-blue/30">
+          MS
+        </div>
+        <span class="font-bold text-xl tracking-tight text-white">Munir <span class="text-brand-accent">SINANI</span></span>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
+        <a href="#about" class="hover:text-brand-accent transition-colors lang" data-fr="À propos" data-en="About">À propos</a>
+        <a href="#experience" class="hover:text-brand-accent transition-colors lang" data-fr="Parcours" data-en="Experience">Parcours</a>
+        <a href="#skills" class="hover:text-brand-accent transition-colors lang" data-fr="Compétences" data-en="Skills">Compétences</a>
+        <a href="#projects" class="hover:text-brand-accent transition-colors lang" data-fr="Projets & DOCX" data-en="Projects & DOCX">Projets & DOCX</a>
+        <a href="#contact" class="hover:text-brand-accent transition-colors lang" data-fr="Contact" data-en="Contact">Contact</a>
+      </nav>
+
+      <div class="flex items-center gap-4">
+        <button onclick="toggleLang()" class="px-3 py-1.5 rounded-full text-xs font-mono font-semibold bg-brand-blue/20 text-brand-accent border border-brand-accent/30 hover:bg-brand-accent hover:text-black transition-all">
+          <span id="lang-label">EN | FR</span>
+        </button>
+        <a href="#contact" class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-brand-blue to-brand-accent text-white text-sm font-semibold hover:opacity-90 transition-all shadow-md shadow-brand-blue/20">
+          <i data-lucide="send" class="w-4 h-4"></i> <span class="lang" data-fr="Me contacter" data-en="Contact me">Me contacter</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="relative z-10 min-h-screen pt-32 pb-20 px-6 max-w-7xl mx-auto flex flex-col justify-center">
+    <div class="max-w-3xl space-y-6">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-accent/10 border border-brand-accent/30 text-brand-accent text-xs font-mono">
+        <span class="w-2 h-2 rounded-full bg-brand-neon animate-pulse"></span>
+        <span class="lang" data-fr="Support Clients & Infrastructure — Préavis en cours" data-en="Client Support & Infrastructure — Serving Notice">Support Clients & Infrastructure — Préavis en cours</span>
+      </div>
+      
+      <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight leading-none text-white glow-title">
+        <span class="lang" data-fr="Technicien Support Clients" data-en="Client Support Technician">Technicien Support Clients</span> <br>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-accent to-brand-neon">& Infrastructure Linux / Réseaux</span>
+      </h1>
+
+      <p class="text-lg text-gray-300 leading-relaxed lang"
+         data-fr="Diplômé d'un BTS SIO (SISR), j'assure le support technique N1 et la maintenance des objets connectés chez Kardham Digital. Passionné par Linux, j'administre un Homelab sous Ubuntu Server (Docker, Nextcloud, WireGuard, stack d'observabilité Prometheus/Grafana)."
+         data-en="BTS SIO (SISR) graduate providing Tier 1 technical support and connected device maintenance at Kardham Digital. Linux enthusiast managing an Ubuntu Server Homelab (Docker, Nextcloud, WireGuard, Prometheus/Grafana observability stack).">
+        Diplômé d'un BTS SIO (SISR), j'assure le support technique N1 et la maintenance des objets connectés chez Kardham Digital. Passionné par Linux, j'administre un Homelab sous Ubuntu Server (Docker, Nextcloud, WireGuard, stack d'observabilité Prometheus/Grafana).
+      </p>
+
+      <div class="flex flex-wrap gap-4 pt-4">
+        <a href="#projects" class="px-6 py-3 rounded-xl bg-gradient-to-r from-brand-blue to-brand-accent text-white font-semibold flex items-center gap-2 hover:shadow-lg hover:shadow-brand-blue/30 transition-all">
+          <i data-lucide="file-text" class="w-5 h-5"></i> <span class="lang" data-fr="Consulter mes rapports DOCX" data-en="View DOCX Reports">Consulter mes rapports DOCX</span>
+        </a>
+        <a href="#terminal" class="px-6 py-3 rounded-xl glass-card hover:bg-white/10 font-mono text-sm text-gray-300 flex items-center gap-2 transition-all">
+          <i data-lucide="terminal" class="w-5 h-5 text-brand-accent"></i> <span class="lang" data-fr="Ouvrir le terminal" data-en="Open terminal">Ouvrir le terminal</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section À propos & Homelab -->
+  <section id="about" class="relative z-10 py-20 px-6 max-w-7xl mx-auto">
+    <div class="grid md:grid-cols-2 gap-12 items-center">
+      <div class="space-y-6">
+        <h2 class="text-3xl font-bold text-white flex items-center gap-3">
+          <i data-lucide="user" class="text-brand-accent"></i>
+          <span class="lang" data-fr="À propos" data-en="About">À propos</span>
+        </h2>
+        <p class="text-gray-300 leading-relaxed lang"
+           data-fr="Rigoureux et autonome, je souhaite faire évoluer mes compétences vers l'administration système Linux, la sécurité et les infrastructures. Mon expérience couvre le support utilisateur N1/N2, la gestion de parc IoT/Smart Office, ainsi que le déploiement de réseaux fibre optique FTTH/FTTO."
+           data-en="Rigorous and autonomous, I aim to expand my skills towards Linux system administration, security, and infrastructure. My background includes T1/T2 support, IoT/Smart Office fleet management, and FTTH/FTTO fiber optic deployments.">
+          Rigoureux et autonome, je souhaite faire évoluer mes compétences vers l'administration système Linux, la sécurité et les infrastructures. Mon expérience couvre le support utilisateur N1/N2, la gestion de parc IoT/Smart Office, ainsi que le déploiement de réseaux fibre optique FTTH/FTTO.
+        </p>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="p-4 rounded-xl glass-card">
+            <div class="text-xl font-bold text-brand-accent font-mono">BTS SIO SISR</div>
+            <div class="text-xs text-gray-400">Lycée Paul Lapie (Courbevoie)</div>
+          </div>
+          <div class="p-4 rounded-xl glass-card">
+            <div class="text-xl font-bold text-brand-neon font-mono">Permis B</div>
+            <div class="text-xs text-gray-400">Véhiculé / Mobile 73 & Suisse</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Homelab Stack Card -->
+      <div class="glass-card p-6 rounded-2xl space-y-4">
+        <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+          <span class="text-xs font-mono text-brand-accent flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-brand-neon"></span> Homelab Architecture (Ubuntu Server)
+          </span>
+          <span class="text-xs font-mono text-gray-500">Docker Engine</span>
+        </div>
+        <div class="space-y-2.5 font-mono text-xs">
+          <div class="p-3 bg-black/50 rounded-lg flex justify-between items-center">
+            <span class="text-gray-400">Services Cloud:</span>
+            <span class="text-brand-accent">Nextcloud, Pi-hole, AdGuard</span>
+          </div>
+          <div class="p-3 bg-black/50 rounded-lg flex justify-between items-center">
+            <span class="text-gray-400">Réseau & VPN:</span>
+            <span class="text-brand-blue">WireGuard, Nginx Proxy Manager</span>
+          </div>
+          <div class="p-3 bg-black/50 rounded-lg flex justify-between items-center">
+            <span class="text-gray-400">Observabilité:</span>
+            <span class="text-brand-purple">Prometheus, Grafana</span>
+          </div>
+          <div class="p-3 bg-black/50 rounded-lg flex justify-between items-center">
+            <span class="text-gray-400">Sécurité & Hardening:</span>
+            <span class="text-brand-neon">Clés SSH, UFW, NFTables, Fail2ban</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Parcours Professionnel -->
+  <section id="experience" class="relative z-10 py-20 px-6 max-w-7xl mx-auto">
+    <h2 class="text-3xl font-bold text-white mb-12 flex items-center gap-3">
+      <i data-lucide="briefcase" class="text-brand-accent"></i>
+      <span class="lang" data-fr="Expériences Professionnelles" data-en="Work Experience">Expériences Professionnelles</span>
+    </h2>
+
+    <div class="space-y-6">
+
+      <!-- Kardham Digital -->
+      <div class="glass-card p-6 rounded-2xl flex flex-col md:flex-row justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-3">
+            <span class="px-2.5 py-1 rounded bg-brand-blue/20 text-brand-accent text-xs font-mono">CDI</span>
+            <h3 class="text-xl font-bold text-white">Technicien support clients</h3>
+          </div>
+          <p class="text-sm text-brand-accent font-semibold mt-1">Kardham Digital — Paris</p>
+          <ul class="text-sm text-gray-300 mt-2 space-y-1 list-disc list-inside">
+            <li>Support technique N1 pour les équipements connectés et solutions Smart Office.</li>
+            <li>Gestion et traitement des incidents techniques (Helpdesk) pour garantir la disponibilité des services.</li>
+            <li>Supervision et maintien en condition opérationnelle des parcs de capteurs IoT et systèmes audiovisuels.</li>
+          </ul>
+        </div>
+        <div class="font-mono text-xs text-gray-400 whitespace-nowrap">Depuis Déc. 2025</div>
+      </div>
+
+      <!-- Mairie Asnières -->
+      <div class="glass-card p-6 rounded-2xl flex flex-col md:flex-row justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-3">
+            <span class="px-2.5 py-1 rounded bg-white/10 text-gray-300 text-xs font-mono">Stage</span>
+            <h3 class="text-xl font-bold text-white">Technicien support informatique</h3>
+          </div>
+          <p class="text-sm text-brand-accent font-semibold mt-1">Service DSI — Mairie d'Asnières-sur-Seine</p>
+          <ul class="text-sm text-gray-300 mt-2 space-y-1 list-disc list-inside">
+            <li>Prise en charge et résolution des incidents matériels, logiciels et réseau N1/N2 via GLPI.</li>
+            <li>Administration et gestion des comptes utilisateurs sur Active Directory (création, droits, réinitialisation).</li>
+            <li>Préparation, configuration, mise à jour et déploiement de postes sous Windows 10/11.</li>
+          </ul>
+        </div>
+        <div class="font-mono text-xs text-gray-400 whitespace-nowrap">Mars 2025 — Avril 2025</div>
+      </div>
+
+      <!-- Orange -->
+      <div class="glass-card p-6 rounded-2xl flex flex-col md:flex-row justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-3">
+            <span class="px-2.5 py-1 rounded bg-white/10 text-gray-300 text-xs font-mono">Stage</span>
+            <h3 class="text-xl font-bold text-white">Technicien Fibre Optique / ADSL</h3>
+          </div>
+          <p class="text-sm text-brand-accent font-semibold mt-1">Orange — Nanterre</p>
+          <ul class="text-sm text-gray-300 mt-2 space-y-1 list-disc list-inside">
+            <li>Installation, raccordement et mise en service de lignes fibre optique (FTTH/FTTO) pour pros et particuliers.</li>
+            <li>Brassage en armoires techniques, tirage de câbles et soudure de fibres (épissurage).</li>
+            <li>Localisation et résolution de pannes réseau (signal, connectique) et tests de conformité OTDR.</li>
+          </ul>
+        </div>
+        <div class="font-mono text-xs text-gray-400 whitespace-nowrap">Mars 2023 — Juil. 2024</div>
+      </div>
+
+      <!-- Tour Eiffel -->
+      <div class="glass-card p-6 rounded-2xl flex flex-col md:flex-row justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-3">
+            <span class="px-2.5 py-1 rounded bg-white/10 text-gray-300 text-xs font-mono">Stage</span>
+            <h3 class="text-xl font-bold text-white">Technicien Support Informatique</h3>
+          </div>
+          <p class="text-sm text-brand-accent font-semibold mt-1">Société d'Exploitation de la Tour Eiffel — Paris</p>
+          <ul class="text-sm text-gray-300 mt-2 space-y-1 list-disc list-inside">
+            <li>Assistance technique de proximité, diagnostic d'incidents matériels/logiciels et traitement des tickets.</li>
+            <li>Configuration, déploiement de postes Windows 10 et maintenance préventive du parc.</li>
+          </ul>
+        </div>
+        <div class="font-mono text-xs text-gray-400 whitespace-nowrap">Nov. 2022 — Déc. 2022</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Section Compétences -->
+  <section id="skills" class="relative z-10 py-20 px-6 max-w-7xl mx-auto">
+    <h2 class="text-3xl font-bold text-white mb-12 flex items-center gap-3">
+      <i data-lucide="cpu" class="text-brand-accent"></i>
+      <span class="lang" data-fr="Compétences Informatiques" data-en="Technical Skills">Compétences Informatiques</span>
+    </h2>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      
+      <div class="glass-card p-6 rounded-2xl space-y-3">
+        <div class="text-brand-accent font-mono font-bold flex items-center gap-2">
+          <i data-lucide="server" class="w-5 h-5"></i> Systèmes & Virtualisation
+        </div>
+        <ul class="text-sm text-gray-300 space-y-1 font-mono">
+          <li>• Linux (Ubuntu, Server, Debian, Kali)</li>
+          <li>• Windows Server, Windows 10/11</li>
+          <li>• Proxmox VE, KVM, VMware</li>
+          <li>• Docker (Conteneurisation)</li>
+        </ul>
+      </div>
+
+      <div class="glass-card p-6 rounded-2xl space-y-3">
+        <div class="text-brand-blue font-mono font-bold flex items-center gap-2">
+          <i data-lucide="shield-check" class="w-5 h-5"></i> Sécurité & Réseaux
+        </div>
+        <ul class="text-sm text-gray-300 space-y-1 font-mono">
+          <li>• SSH Hardening, Fail2ban, NFTables</li>
+          <li>• Nginx Proxy Manager, WireGuard VPN</li>
+          <li>• Cisco Routing/Switching, Packet Tracer</li>
+          <li>• Nextcloud Private Cloud</li>
+        </ul>
+      </div>
+
+      <div class="glass-card p-6 rounded-2xl space-y-3">
+        <div class="text-brand-neon font-mono font-bold flex items-center gap-2">
+          <i data-lucide="wrench" class="w-5 h-5"></i> Admin & Scripting
+        </div>
+        <ul class="text-sm text-gray-300 space-y-1 font-mono">
+          <li>• Active Directory, IAM M365</li>
+          <li>• GLPI, Gestion d'incidents</li>
+          <li>• Bash, PowerShell, Git/GitHub</li>
+          <li>• IoT & Supervision Smart Office</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Section Terminal Interactif -->
+  <section id="terminal" class="relative z-10 py-20 px-6 max-w-7xl mx-auto">
+    <h2 class="text-3xl font-bold text-white mb-6 flex items-center gap-3">
+      <i data-lucide="terminal" class="text-brand-accent"></i>
+      <span class="lang" data-fr="Terminal Homelab Interactif" data-en="Interactive Homelab Terminal">Terminal Homelab Interactif</span>
+    </h2>
+
+    <div class="glass-card rounded-2xl overflow-hidden border border-gray-800 shadow-2xl">
+      <div class="bg-black/80 px-4 py-3 flex items-center justify-between border-b border-gray-800">
+        <div class="flex gap-2">
+          <div class="w-3 h-3 rounded-full bg-red-500"></div>
+          <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+          <div class="w-3 h-3 rounded-full bg-green-500"></div>
+        </div>
+        <div class="text-xs font-mono text-gray-400">munir@ubuntu-server-homelab:~</div>
+        <div></div>
+      </div>
+      
+      <div class="p-6 font-mono text-sm space-y-4 min-h-[200px]">
+        <div>
+          <span class="text-brand-neon">munir@ubuntu-server</span>:<span class="text-brand-blue">~</span>$ <span class="text-white">help</span>
+        </div>
+        <div class="text-xs text-gray-400">
+          Commandes disponibles : <span class="text-brand-accent">cv</span> | <span class="text-brand-accent">docker ps</span> | <span class="text-brand-accent">skills</span> | <span class="text-brand-accent">clear</span>
+        </div>
+        <div id="terminal-output" class="text-gray-300 space-y-2"></div>
+        <div class="flex items-center gap-2 pt-2">
+          <span class="text-brand-neon">munir@ubuntu-server</span>:<span class="text-brand-blue">~</span>$&nbsp;
+          <input type="text" id="terminal-input" placeholder="Tapez 'cv' ou 'docker ps'..." class="bg-transparent border-none outline-none text-white w-full font-mono text-sm">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Projets & DOCX -->
+  <section id="projects" class="relative z-10 py-20 px-6 max-w-7xl mx-auto">
+    <h2 class="text-3xl font-bold text-white mb-12 flex items-center gap-3">
+      <i data-lucide="folder" class="text-brand-accent"></i>
+      <span class="lang" data-fr="Projets & Documentation Word (DOCX)" data-en="Projects & Word Docs (DOCX)">Projets & Documentation Word (DOCX)</span>
+    </h2>
+
+    <div class="grid md:grid-cols-3 gap-8">
+      
+      <div class="glass-card p-6 rounded-2xl flex flex-col justify-between">
+        <div class="space-y-4">
+          <div class="p-3 bg-brand-blue/10 rounded-xl w-fit text-brand-blue">
+            <i data-lucide="server" class="w-8 h-8"></i>
+          </div>
+          <h3 class="text-xl font-bold text-white">Infra & Sécurité Linux</h3>
+          <p class="text-sm text-gray-300 leading-relaxed">
+            Déploiement d'un Cloud privé (Nextcloud, Pi-hole, Prometheus & Grafana). Sécurisation SSH par clés, pare-feu UFW/NFTables et Fail2ban.
+          </p>
+          <div class="flex flex-wrap gap-2 pt-2 font-mono text-xs text-gray-400">
+            <span>#UbuntuServer</span> <span>#Docker</span> <span>#Prometheus</span>
+          </div>
+        </div>
+        <a href="docs/Rapport_Projet_Docker_MDM.docx" target="_blank" class="mt-6 px-4 py-2.5 rounded-xl bg-brand-blue/20 text-brand-blue border border-brand-blue/30 flex items-center justify-center gap-2 hover:bg-brand-blue hover:text-white font-semibold text-sm transition-all">
+          <i data-lucide="download" class="w-4 h-4"></i> Rapport Infra DOCX
+        </a>
+      </div>
+
+      <div class="glass-card p-6 rounded-2xl flex flex-col justify-between">
+        <div class="space-y-4">
+          <div class="p-3 bg-brand-accent/10 rounded-xl w-fit text-brand-accent">
+            <i data-lucide="lock" class="w-8 h-8"></i>
+          </div>
+          <h3 class="text-xl font-bold text-white">Services, Proxy & VPN</h3>
+          <p class="text-sm text-gray-300 leading-relaxed">
+            Configuration d'un Reverse Proxy (Nginx Proxy Manager) et d'un tunnel VPN WireGuard pour l'accès distant sécurisé aux conteneurs. Scripts Bash d'automatisation.
+          </p>
+          <div class="flex flex-wrap gap-2 pt-2 font-mono text-xs text-gray-400">
+            <span>#WireGuard</span> <span>#Nginx</span> <span>#Bash</span>
+          </div>
+        </div>
+        <a href="docs/Rapport_Stage_Reseau_Virtualisation.docx" target="_blank" class="mt-6 px-4 py-2.5 rounded-xl bg-brand-accent/20 text-brand-accent border border-brand-accent/30 flex items-center justify-center gap-2 hover:bg-brand-accent hover:text-black font-semibold text-sm transition-all">
+          <i data-lucide="download" class="w-4 h-4"></i> Rapport Réseau DOCX
+        </a>
+      </div>
+
+      <div class="glass-card p-6 rounded-2xl flex flex-col justify-between">
+        <div class="space-y-4">
+          <div class="p-3 bg-brand-neon/10 rounded-xl w-fit text-brand-neon">
+            <i data-lucide="cpu" class="w-8 h-8"></i>
+          </div>
+          <h3 class="text-xl font-bold text-white">Poubelle Connectée Arduino</h3>
+          <p class="text-sm text-gray-300 leading-relaxed">
+            Projet électronique de détection du niveau de remplissage via capteurs à ultrasons et carte embarquée Arduino.
+          </p>
+          <div class="flex flex-wrap gap-2 pt-2 font-mono text-xs text-gray-400">
+            <span>#Arduino</span> <span>#C++</span> <span>#IoT</span>
+          </div>
+        </div>
+        <a href="docs/Rapport_Projet_IoT_Arduino.docx" target="_blank" class="mt-6 px-4 py-2.5 rounded-xl bg-brand-neon/20 text-brand-neon border border-brand-neon/30 flex items-center justify-center gap-2 hover:bg-brand-neon hover:text-black font-semibold text-sm transition-all">
+          <i data-lucide="download" class="w-4 h-4"></i> Fiche Projet IoT DOCX
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Section Contact -->
+  <section id="contact" class="relative z-10 py-20 px-6 max-w-7xl mx-auto">
+    <div class="glass-card p-8 md:p-12 rounded-3xl max-w-3xl mx-auto text-center space-y-6">
+      <h2 class="text-3xl font-bold text-white">Munir SINANI</h2>
+      <p class="text-brand-accent font-medium">Technicien Support Clients & Infrastructure</p>
+      
+      <div class="grid sm:grid-cols-2 gap-4 text-left pt-4">
+        <div class="p-4 bg-black/40 rounded-xl flex items-center gap-3">
+          <i data-lucide="mail" class="text-brand-accent"></i>
+          <div>
+            <div class="text-xs text-gray-400">Email</div>
+            <a href="mailto:sinanimunir25@gmail.com" class="text-sm font-mono text-white hover:underline">sinanimunir25@gmail.com</a>
+          </div>
+        </div>
+        <div class="p-4 bg-black/40 rounded-xl flex items-center gap-3">
+          <i data-lucide="phone" class="text-brand-accent"></i>
+          <div>
+            <div class="text-xs text-gray-400">Téléphone</div>
+            <span class="text-sm font-mono text-white">06 80 41 05 77</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-4 text-xs text-gray-400 font-mono flex justify-center gap-4">
+        <span>📍 Asnières-sur-Seine (92600)</span>
+        <span>🚘 Permis B (Véhiculé)</span>
+      </div>
+    </div>
+  </section>
+
+  <footer class="relative z-10 py-8 text-center text-xs text-gray-500 font-mono border-t border-gray-900">
+    © 2026 Munir SINANI — Real-time Three.js 3D Engine & Tailwind CSS
+  </footer>
+
+  <!-- Scripts JS -->
+  <script>
+    // 1. Initialisation des icônes Lucide
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) lucide.createIcons();
+    });
+
+    // 2. Gestionnaire de Traduction
+    let currentLang = 'fr';
+    function toggleLang() {
+      currentLang = currentLang === 'fr' ? 'en' : 'fr';
+      document.getElementById('lang-label').textContent = currentLang === 'fr' ? 'EN | FR' : 'FR | EN';
+      document.querySelectorAll('.lang').forEach(el => {
+        const text = el.getAttribute(`data-${currentLang}`);
+        if (text) el.textContent = text;
+      });
+    }
+
+    // 3. Arrière-plan 3D avec Three.js
+    function init3D() {
+      const container = document.getElementById('canvas-container');
+      if (!container || !window.THREE) return;
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      container.appendChild(renderer.domElement);
+
+      // Grille néon en perspective
+      const gridHelper = new THREE.GridHelper(60, 40, 0x06b6d4, 0x1e293b);
+      gridHelper.position.y = -5;
+      scene.add(gridHelper);
+
+      // Nuage de particules interactives
+      const particleCount = 400;
+      const geometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(particleCount * 3);
+
+      for (let i = 0; i < particleCount * 3; i += 3) {
+        positions[i] = (Math.random() - 0.5) * 40;
+        positions[i + 1] = (Math.random() - 0.5) * 30;
+        positions[i + 2] = (Math.random() - 0.5) * 40;
+      }
+
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      const material = new THREE.PointsMaterial({
+        size: 0.12,
+        color: 0x3b82f6,
+        transparent: true,
+        opacity: 0.7
+      });
+
+      const particles = new THREE.Points(geometry, material);
+      scene.add(particles);
+
+      camera.position.z = 15;
+
+      let mouseX = 0, mouseY = 0;
+      window.addEventListener('mousemove', (e) => {
+        mouseX = (e.clientX / window.innerWidth - 0.5) * 0.3;
+        mouseY = (e.clientY / window.innerHeight - 0.5) * 0.3;
+      });
+
+      function animate() {
+        requestAnimationFrame(animate);
+        particles.rotation.y += 0.0008;
+        gridHelper.position.z = (gridHelper.position.z + 0.02) % 1.5;
+
+        camera.position.x += (mouseX - camera.position.x) * 0.05;
+        camera.position.y += (-mouseY - camera.position.y) * 0.05;
+        camera.lookAt(scene.position);
+
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+    }
+
+    window.addEventListener('load', init3D);
+
+    // 4. Terminal Interactif
+    const termInput = document.getElementById('terminal-input');
+    const termOutput = document.getElementById('terminal-output');
+
+    if (termInput) {
+      termInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          const cmd = termInput.value.trim().toLowerCase();
+          termInput.value = '';
+          let res = '';
+
+          if (cmd === 'cv') {
+            res = '✔ Munir SINANI — Technicien Support Clients & Infrastructure (BTS SIO SISR).';
+          } else if (cmd === 'docker ps') {
+            res = 'CONTAINER ID   IMAGE                 STATUS\n' +
+                  'a1b2c3d4e5f6   nextcloud:latest      Up 12 days (healthy)\n' +
+                  'f6e5d4c3b2a1   pihole/pihole:latest  Up 12 days\n' +
+                  '9876543210ab   wireguard:latest      Up 12 days';
+          } else if (cmd === 'skills') {
+            res = '✔ Linux (Ubuntu/Debian), Docker, WireGuard, Nginx, Prometheus/Grafana, Active Directory, GLPI.';
+          } else if (cmd === 'clear') {
+            termOutput.innerHTML = '';
+            return;
+          } else {
+            res = `❌ Commande inconnue: ${cmd}. Tapez 'cv', 'docker ps', 'skills' ou 'clear'.`;
+          }
+
+          termOutput.innerHTML += `<p class="mt-2 text-brand-neon">munir@ubuntu-server:~$ ${cmd}</p><pre class="text-gray-300 text-xs whitespace-pre-wrap">${res}</pre>`;
+        }
+      });
+    }
+  </script>
+</body>
+</html>
